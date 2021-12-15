@@ -1,0 +1,6 @@
+#!/usr/bin/env sh
+
+export VED_DB_DRIVER="org.sqlite.JDBC"
+export VED_DB_URL="jdbc:sqlite:./data/ved.db"
+
+./gradlew backendRun -t

@@ -28,9 +28,13 @@ repositories {
 val kotlinVersion: String by System.getProperties()
 val kvisionVersion: String by System.getProperties()
 val coroutinesVersion: String by project
+val exposedVersion: String by project
+val sqliteVersion: String by project
 
 val webDir = file("src/frontendMain/web")
 val mainClassName = "io.joaofig.vedmap.MainKt"
+
+val localhost = "127.0.0.1"
 
 kotlin {
     jvm("backend") {
@@ -51,8 +55,8 @@ kotlin {
                     open = false,
                     port = 3000,
                     proxy = mutableMapOf(
-                        "/kv/*" to "http://localhost:8080",
-                        "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
+                        "/kv/*" to "http://$localhost:8080",
+                        "/kvws/*" to mapOf("target" to "ws://$localhost:8080", "ws" to true)
                     ),
                     static = mutableListOf("$buildDir/processedResources/frontend/main")
                 )
@@ -90,6 +94,10 @@ kotlin {
                 implementation("org.springframework.boot:spring-boot-devtools")
                 implementation("org.springframework.boot:spring-boot-starter-webflux")
                 implementation("org.springframework.boot:spring-boot-starter-security")
+                implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+                implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+                implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+                implementation("org.xerial:sqlite-jdbc:$sqliteVersion")
             }
         }
         val backendTest by getting {

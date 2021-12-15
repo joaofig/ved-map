@@ -1,5 +1,8 @@
 package io.joaofig.vedmap.services
 
+import io.joaofig.vedmap.models.Trip
+import io.joaofig.vedmap.repositories.TripRepository
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.config.ConfigurableBeanFactory
 import org.springframework.context.annotation.Scope
 import org.springframework.stereotype.Service
@@ -7,7 +10,14 @@ import org.springframework.stereotype.Service
 @Service
 @Scope(value = ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 actual class TripService : ITripService {
+    @Autowired
+    private lateinit var repository: TripRepository
+
     override suspend fun getVehicleTripIds(vehicleId: Int): List<Int> {
-        return listOf(1, 2, 3, 4, 5)
+        return repository.getTripList(vehicleId)
+    }
+
+    override suspend fun getVehicleTrips(vehicleId: Int): List<Trip> {
+        return repository.getVehicleTrips(vehicleId)
     }
 }
