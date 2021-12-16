@@ -30,6 +30,7 @@ val kvisionVersion: String by System.getProperties()
 val coroutinesVersion: String by project
 val exposedVersion: String by project
 val sqliteVersion: String by project
+val uberH3Version: String by project
 
 val webDir = file("src/frontendMain/web")
 val mainClassName = "io.joaofig.vedmap.MainKt"
@@ -98,6 +99,7 @@ kotlin {
                 implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
                 implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
                 implementation("org.xerial:sqlite-jdbc:$sqliteVersion")
+                implementation("com.uber:h3:$uberH3Version")
             }
         }
         val backendTest by getting {

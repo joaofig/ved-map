@@ -8,11 +8,11 @@ data class MapPoint(
     val dayNumber:      Double = 0.0,
     val vehicleId:      Int = 0,
     val tripId:         Int = 0,
-    val timeStamp:      Int = 0,
+    val timestamp:      Int = 0,
     val latitude:       Double = 0.0,
     val longitude:      Double = 0.0,
-    val speed:          Double = 0.0,
-    val maf:            Double = 0.0,
-    val rpm:            Double = 0.0,
-    val absoluteLoad:   Double = 0.0
+    val speed:          Double? = null,
+    val maf:            Double? = null,
+    val rpm:            Double? = null,
+    val absoluteLoad:   Double? = null
 )
