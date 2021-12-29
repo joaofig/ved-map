@@ -1,36 +1,17 @@
 package io.joaofig.vedmap
 
-import io.joaofig.vedmap.clients.TripClient
-import io.joaofig.vedmap.clients.VehicleClient
-import io.kvision.Application
-import io.kvision.CoreModule
-import io.kvision.BootstrapModule
-import io.kvision.BootstrapCssModule
-import io.kvision.BootstrapSelectModule
-import io.kvision.BootstrapDatetimeModule
-import io.kvision.BootstrapSpinnerModule
-import io.kvision.BootstrapUploadModule
-import io.kvision.BootstrapTypeaheadModule
-import io.kvision.BootstrapIconsModule
-import io.kvision.FontAwesomeModule
-import io.kvision.RichTextModule
-import io.kvision.ChartModule
-import io.kvision.TabulatorModule
-import io.kvision.MapsModule
-import io.kvision.ToastModule
-import io.kvision.PrintModule
-import io.kvision.html.Br
-import io.kvision.html.Span
+import io.joaofig.vedmap.views.MainView
+import io.kvision.*
 import io.kvision.i18n.DefaultI18nManager
 import io.kvision.i18n.I18n
-import io.kvision.module
+import io.kvision.maps.BaseLayerProvider
+import io.kvision.maps.CRS
+import io.kvision.maps.Maps
 import io.kvision.panel.root
-import io.kvision.require
-import io.kvision.startApplication
+import io.kvision.utils.pc
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
-import kotlinx.coroutines.launch
 
 val AppScope = CoroutineScope(window.asCoroutineDispatcher())
 
@@ -46,27 +27,40 @@ class App : Application() {
             )
     }
 
+    private fun createMap(): Maps {
+        val map = Maps(
+            lat = 0.0,
+            lng= 0.0,
+            zoom = 4,
+            baseLayerProvider = BaseLayerProvider.OSM,
+            crs = CRS.EPSG3857)
+        map.height = 100.pc
+        map.width = 100.pc
+        return map
+    }
+
     override fun start(state: Map<String, Any>) {
         registerTranslations()
 
-        val root = root("kvapp") {
+        root("kvapp") {
+            add(MainView())
         }
-
-        AppScope.launch {
-            val trips = TripClient.getVehicleTrips(2)
-            for (trip in trips) {
-                root.add(Span(trip.toString()))
-                root.add(Br())
-            }
-        }
-
-        AppScope.launch {
-            val vehicles = VehicleClient.getVehicles()
-            for (vehicle in vehicles) {
-                root.add(Span(vehicle.toString()))
-                root.add(Br())
-            }
-        }
+//
+//        AppScope.launch {
+//            val trips = TripClient.getVehicleTrips(2)
+//            for (trip in trips) {
+//                root.add(Span(trip.toString()))
+//                root.add(Br())
+//            }
+//        }
+//
+//        AppScope.launch {
+//            val vehicles = VehicleClient.getVehicles()
+//            for (vehicle in vehicles) {
+//                root.add(Span(vehicle.toString()))
+//                root.add(Br())
+//            }
+//        }
 
     }
 }
