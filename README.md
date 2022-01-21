@@ -13,4 +13,4 @@ going through the
 end, you will get an operational SQLite database with all the required 
 data. Going through the Jupyter notebooks will also help you understand
 the nature of the data, what information it contains, and how it could
-be graphically displayed.
+graphically be displayed.

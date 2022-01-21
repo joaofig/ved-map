@@ -8,7 +8,7 @@ import io.kvision.maps.BaseLayerProvider
 import io.kvision.maps.CRS
 import io.kvision.maps.Maps
 import io.kvision.panel.root
-import io.kvision.utils.pc
+import io.kvision.utils.perc
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -34,8 +34,8 @@ class App : Application() {
             zoom = 4,
             baseLayerProvider = BaseLayerProvider.OSM,
             crs = CRS.EPSG3857)
-        map.height = 100.pc
-        map.width = 100.pc
+        map.height = 100.perc
+        map.width = 100.perc
         return map
     }
 

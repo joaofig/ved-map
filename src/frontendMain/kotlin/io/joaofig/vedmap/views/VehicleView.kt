@@ -7,6 +7,7 @@ import io.kvision.html.Div
 import io.kvision.state.bind
 import io.kvision.table.*
 import io.kvision.utils.perc
+import io.kvision.utils.pt
 import io.kvision.utils.px
 
 class VehicleView : Div() {
@@ -21,6 +22,7 @@ class VehicleView : Div() {
             }
             table(types = setOf(TableType.STRIPED, TableType.HOVER)) {
                 addCssStyle(headerStyle)
+                fontSize = 10.pt
 
                 headerCell("Id") { }
                 headerCell("Type") { }
