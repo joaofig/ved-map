@@ -43,8 +43,6 @@ class MainView constructor() : Div() {
 
             add(MapView())
         }
-
-
     }
 
     private fun setView(view: Component) {

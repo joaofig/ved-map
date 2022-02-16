@@ -2,11 +2,9 @@ package io.joaofig.vedmap.modules.kvleaf
 
 import io.joaofig.vedmap.modules.LeafletModule.leaflet as L
 
-class LatLngBounds(private val jsObject: dynamic) {
+class LatLngBounds(latLngBounds: dynamic) : JsObject(latLngBounds) {
 
     constructor(corner1: LatLng, corner2: LatLng): this(L.latLngBounds(corner1.toDynamic(), corner2.toDynamic())) { }
-
-    fun toDynamic() = jsObject
 
     fun extend(latLng: LatLng) = LatLngBounds(jsObject.extend(latLng.toDynamic()))
     fun extend(latLngBounds: LatLngBounds) = LatLngBounds(jsObject.extend(latLngBounds.toDynamic()))
