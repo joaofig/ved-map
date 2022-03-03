@@ -1,5 +1,6 @@
 package io.joaofig.vedmap
 
+import io.joaofig.vedmap.services.ClusterServiceManager
 import io.joaofig.vedmap.services.MapPointServiceManager
 import io.joaofig.vedmap.services.TripServiceManager
 import io.joaofig.vedmap.services.VehicleServiceManager
@@ -21,7 +22,8 @@ class KVApplication {
         PingServiceManager,
         TripServiceManager,
         VehicleServiceManager,
-        MapPointServiceManager
+        MapPointServiceManager,
+        ClusterServiceManager
     )
 }
 

@@ -1,10 +1,13 @@
 package io.joaofig.vedmap.views
 
+import io.joaofig.vedmap.AppScope
+import io.joaofig.vedmap.clients.ClusterClient
+import io.joaofig.vedmap.converters.GeoBoundsConverter
 import io.kvision.html.Div
 import io.kvision.maps.DefaultTileLayers
 import io.kvision.maps.Maps
-import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.utils.perc
+import kotlinx.coroutines.launch
 
 class MapView: Div() {
     private val map = createMap()
@@ -18,11 +21,16 @@ class MapView: Div() {
 
         map.height = 100.perc
         map.width = 100.perc
-        map.configureLeafletMap {
-            setView(LatLng(0, 0), 1)
-            addLayer(DefaultTileLayers.OpenStreetMap)
-        }
 
+        AppScope.launch {
+            val geoBounds = ClusterClient.getClusterBounds()
+            val latLngBounds = GeoBoundsConverter.toLatLngBounds(geoBounds)
+
+            map.configureLeafletMap {
+                fitBounds(latLngBounds)
+                addLayer(DefaultTileLayers.OpenStreetMap)
+            }
+        }
         return map
     }
 }
