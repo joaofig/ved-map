@@ -4,11 +4,7 @@ import io.joaofig.vedmap.views.MainView
 import io.kvision.*
 import io.kvision.i18n.DefaultI18nManager
 import io.kvision.i18n.I18n
-import io.kvision.maps.BaseLayerProvider
-import io.kvision.maps.CRS
-import io.kvision.maps.Maps
 import io.kvision.panel.root
-import io.kvision.utils.perc
 import kotlinx.browser.window
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.asCoroutineDispatcher
@@ -25,18 +21,6 @@ class App : Application() {
                     "pl" to require("i18n/messages-pl.json")
                 )
             )
-    }
-
-    private fun createMap(): Maps {
-        val map = Maps(
-            lat = 0.0,
-            lng= 0.0,
-            zoom = 4,
-            baseLayerProvider = BaseLayerProvider.OSM,
-            crs = CRS.EPSG3857)
-        map.height = 100.perc
-        map.width = 100.perc
-        return map
     }
 
     override fun start(state: Map<String, Any>) {

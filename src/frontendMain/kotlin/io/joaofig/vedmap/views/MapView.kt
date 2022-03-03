@@ -1,27 +1,28 @@
 package io.joaofig.vedmap.views
 
-import io.joaofig.vedmap.modules.Leaflet
 import io.kvision.html.Div
-import io.kvision.maps.BaseLayerProvider
-import io.kvision.maps.CRS
+import io.kvision.maps.DefaultTileLayers
+import io.kvision.maps.Maps
+import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.utils.perc
 
 class MapView: Div() {
-    val map = createMap()
+    private val map = createMap()
 
     init {
         add(map)
     }
 
-    private fun createMap(): Leaflet {
-        val map = Leaflet(
-            lat = 0.0,
-            lng= 0.0,
-            zoom = 4,
-            baseLayerProvider = BaseLayerProvider.OSM,
-            crs = CRS.EPSG3857)
+    private fun createMap(): Maps {
+        val map = Maps()
+
         map.height = 100.perc
         map.width = 100.perc
+        map.configureLeafletMap {
+            setView(LatLng(0, 0), 1)
+            addLayer(DefaultTileLayers.OpenStreetMap)
+        }
+
         return map
     }
 }
