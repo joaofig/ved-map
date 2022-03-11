@@ -1,6 +1,6 @@
 package io.joaofig.vedmap.models
 
-data class TripLimitPoint(
+data class ClusterPoint(
     val id: Int = 0,
     val tripLimitId: Int = 0,
     val latitude: Double = 0.0,

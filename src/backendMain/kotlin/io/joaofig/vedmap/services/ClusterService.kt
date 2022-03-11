@@ -1,5 +1,6 @@
 package io.joaofig.vedmap.services
 
+import io.joaofig.vedmap.models.Cluster
 import io.joaofig.vedmap.models.GeoBounds
 import io.joaofig.vedmap.repositories.ClusterRepository
 import org.springframework.beans.factory.annotation.Autowired
@@ -15,5 +16,9 @@ actual class ClusterService : IClusterService {
 
     override suspend fun getClusterBounds(): GeoBounds {
         return repository.getMapBoundaries()
+    }
+
+    override suspend fun getClusters(): List<Cluster> {
+        return repository.getClusters()
     }
 }
