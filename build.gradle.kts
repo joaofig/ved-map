@@ -141,6 +141,7 @@ kotlin {
                 implementation("io.kvision:kvision-maps:$kvisionVersion")
                 implementation("io.kvision:kvision-toast:$kvisionVersion")
                 implementation("io.kvision:kvision-print:$kvisionVersion")
+                implementation("com.uber:h3:$uberH3Version")
             }
             kotlin.srcDir("build/generated-src/frontend")
         }
