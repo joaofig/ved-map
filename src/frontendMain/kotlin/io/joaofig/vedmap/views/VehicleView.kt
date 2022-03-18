@@ -20,7 +20,9 @@ class VehicleView : Div() {
                 position = Position.STICKY
                 top = 0.px
             }
-            table(types = setOf(TableType.STRIPED, TableType.HOVER)) {
+            table(
+                types = setOf(TableType.STRIPED, TableType.HOVER),
+                theadColor = TableColor.PRIMARY) {
                 addCssStyle(headerStyle)
                 fontSize = 10.pt
 

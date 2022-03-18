@@ -1,10 +1,12 @@
-package io.joaofig.vedmap.models
+package io.joaofig.vedmap.viewmodels
 
+import io.joaofig.vedmap.messages.ClusterAction
+import io.joaofig.vedmap.messages.ClusterMessage
 import io.joaofig.vedmap.states.ClusterListState
 import io.kvision.state.ObservableListWrapper
 import io.kvision.state.ObservableValue
 
-class ClusterListModel {
+class ClusterListViewModel : ViewModel() {
     private val clusterList: MutableList<ClusterListState> = mutableListOf()
     val clusters: ObservableListWrapper<ClusterListState> = ObservableListWrapper(mutableListOf())
     val sortAscending = ObservableValue<Boolean?>(null)
@@ -28,8 +30,10 @@ class ClusterListModel {
             it.isSelected.subscribe { state ->
                 if (state) {
                     showCluster.value = it
+                    MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.SELECTED))
                 } else {
                     hideCluster.value = it
+                    MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.DESELECTED))
                 }
             }
         }

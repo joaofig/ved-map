@@ -1,8 +1,11 @@
 package io.joaofig.vedmap.controls
 
 import io.kvision.core.Cursor
+import io.kvision.core.onClick
 import io.kvision.state.ObservableValue
 import io.kvision.table.HeaderCell
+import io.kvision.table.Table
+import io.kvision.table.headerCell
 
 
 fun HeaderCell.sortGlyph(bind: ObservableValue<Boolean?>) {
@@ -52,4 +55,15 @@ fun HeaderCell.sortClick(bind: ObservableValue<Boolean?>) {
             bind.value = null
         }
     }
+}
+
+fun Table.sortHeaderCell(
+    content: String? = null,
+    sortAscending: ObservableValue<Boolean?>,
+    init: (HeaderCell.() -> Unit)? = null
+): HeaderCell {
+    val cell =  headerCell(content, init = init)
+    cell.sortGlyph(sortAscending)
+    cell.onClick { sortClick(sortAscending) }
+    return cell
 }

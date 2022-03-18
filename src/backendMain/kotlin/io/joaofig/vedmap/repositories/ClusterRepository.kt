@@ -40,7 +40,7 @@ class ClusterRepository {
             it.h3
         }.distinct()
         val multiList = h3.h3AddressSetToMultiPolygon(hexagons, true)
-        val geoPolygons = GeoMultiPolygon(
+        val geoMultiPolygon = GeoMultiPolygon(
             multiList.map { polygon ->
                 GeoPolygon(
                     polygon.map { ring ->
@@ -53,6 +53,6 @@ class ClusterRepository {
                 )
             }
         )
-        return geoPolygons
+        return geoMultiPolygon
     }
 }

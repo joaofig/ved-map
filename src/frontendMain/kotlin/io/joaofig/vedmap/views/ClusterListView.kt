@@ -2,9 +2,11 @@ package io.joaofig.vedmap.views
 
 import io.joaofig.vedmap.Model
 import io.joaofig.vedmap.controls.dualCheckBox
-import io.joaofig.vedmap.controls.sortClick
-import io.joaofig.vedmap.controls.sortGlyph
-import io.kvision.core.*
+import io.joaofig.vedmap.controls.sortHeaderCell
+import io.kvision.core.Overflow
+import io.kvision.core.Position
+import io.kvision.core.Style
+import io.kvision.core.onEvent
 import io.kvision.form.text.TextInputType
 import io.kvision.form.text.text
 import io.kvision.html.Div
@@ -46,29 +48,27 @@ class ClusterListView : Div() {
                     val headerStyle = Style(selector = "thead th") {
                         position = Position.STICKY
                         top = 0.px
-                    }
-                    table(types = setOf(TableType.STRIPED, TableType.HOVER)) {
+                        }
+                    table(
+                        types = setOf(TableType.STRIPED, TableType.HOVER),
+                        theadColor = TableColor.PRIMARY) {
                         addCssStyle(headerStyle)
                         fontSize = 10.pt
 
-                        headerCell("Id") { }
-                        headerCell("Name ") {
-                            sortGlyph(Model.clusterListModel.sortAscending)
-                        }.onClick {
-                            sortClick(Model.clusterListModel.sortAscending)
-                        }
+                        headerCell("Id")
+                        sortHeaderCell("Name ", Model.clusterListModel.sortAscending)
                         headerCell {
                             icon("far fa-square")
                         }
 
-                        state.mapIndexed {
-                                index, cluster -> index to cluster
+                        state.mapIndexed { index, cluster ->
+                            index to cluster
                         }.forEach {
-                            (_, cluster) -> row {
-                                cell(cluster.id.toString())
-                                cell(cluster.name)
+                            (_, state) -> row {
+                                cell(state.cluster.id.toString())
+                                cell(state.cluster.name)
                                 cell {
-                                   dualCheckBox(cluster.isSelected)
+                                   dualCheckBox(state.isSelected)
                                 }
                             }
                         }
