@@ -35,10 +35,13 @@ class ClusterRepository {
     fun getClusterPolygon(clusterId: Int): GeoMultiPolygon {
         val h3 = H3Core.newInstance()
         val hexagons = transaction(db = db) {
-            ClusterPointRow.find { ClusterPointTable.clusterId.eq(clusterId) }
-        }.map {
-            it.h3
-        }.distinct()
+            ClusterPointRow.find {
+                ClusterPointTable.clusterId eq clusterId
+            }.map {
+                it.h3
+            }.distinct()
+        }
+
         val multiList = h3.h3AddressSetToMultiPolygon(hexagons, true)
         val geoMultiPolygon = GeoMultiPolygon(
             multiList.map { polygon ->

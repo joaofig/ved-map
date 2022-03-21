@@ -2,16 +2,13 @@ package io.joaofig.vedmap.viewmodels
 
 import io.joaofig.vedmap.messages.ClusterAction
 import io.joaofig.vedmap.messages.ClusterMessage
-import io.joaofig.vedmap.states.ClusterListState
 import io.kvision.state.ObservableListWrapper
 import io.kvision.state.ObservableValue
 
 class ClusterListViewModel : ViewModel() {
-    private val clusterList: MutableList<ClusterListState> = mutableListOf()
-    val clusters: ObservableListWrapper<ClusterListState> = ObservableListWrapper(mutableListOf())
+    private val clusterList: MutableList<ClusterListItem> = mutableListOf()
+    val clusters: ObservableListWrapper<ClusterListItem> = ObservableListWrapper(mutableListOf())
     val sortAscending = ObservableValue<Boolean?>(null)
-    val showCluster = ObservableValue<ClusterListState?>(null)
-    val hideCluster = ObservableValue<ClusterListState?>(null)
 
     init {
         sortAscending.subscribe { sortAndFilter() }
@@ -23,16 +20,14 @@ class ClusterListViewModel : ViewModel() {
             sortAndFilter()
         }
 
-    fun initialize(list: List<ClusterListState>) {
+    fun initialize(list: List<ClusterListItem>) {
         clusterList.addAll(list)
         clusters.addAll(clusterList)
         clusterList.forEach {
             it.isSelected.subscribe { state ->
                 if (state) {
-                    showCluster.value = it
                     MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.SELECTED))
                 } else {
-                    hideCluster.value = it
                     MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.DESELECTED))
                 }
             }
@@ -46,8 +41,8 @@ class ClusterListViewModel : ViewModel() {
 
     private fun sortClustersByName(
         sort: Boolean?,
-        list:MutableList<ClusterListState>
-    ): MutableList<ClusterListState> {
+        list:MutableList<ClusterListItem>
+    ): MutableList<ClusterListItem> {
         return when (sort) {
             null -> list
             true -> list.sortedBy { it.cluster.name }.toMutableList()
@@ -57,8 +52,8 @@ class ClusterListViewModel : ViewModel() {
 
     private fun filterClusters(
         filter: String,
-        list: MutableList<ClusterListState>
-    ): MutableList<ClusterListState> {
+        list: MutableList<ClusterListItem>
+    ): MutableList<ClusterListItem> {
         return if (filter == "") {
             list
         } else {
