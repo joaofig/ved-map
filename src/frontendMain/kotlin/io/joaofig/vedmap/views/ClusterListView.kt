@@ -1,8 +1,8 @@
 package io.joaofig.vedmap.views
 
-import io.joaofig.vedmap.Model
 import io.joaofig.vedmap.controls.dualCheckBox
 import io.joaofig.vedmap.controls.sortHeaderCell
+import io.joaofig.vedmap.viewmodels.ViewModelHub
 import io.kvision.core.Overflow
 import io.kvision.core.Position
 import io.kvision.core.Style
@@ -22,11 +22,11 @@ import io.kvision.utils.px
 import io.kvision.utils.vh
 
 class ClusterListView : Div() {
+    private val viewModel = ViewModelHub.clusterList
+
     init {
         padding = 4.px
         height = 100.perc
-
-        Model.loadClusters()
 
         add(
             vPanel {
@@ -37,14 +37,14 @@ class ClusterListView : Div() {
                     placeholder = I18n.tr("Search ...")
                     onEvent {
                         input = {
-                            Model.clusterListModel.nameFilter = value ?: ""
+                            viewModel.nameFilter = value ?: ""
                         }
                     }
                 }
                 div{
                     overflow = Overflow.AUTO
                     height = 100.vh
-                }.bind(Model.clusterListModel.clusters) { state ->
+                }.bind(viewModel.clusters) { state ->
                     val headerStyle = Style(selector = "thead th") {
                         position = Position.STICKY
                         top = 0.px
@@ -56,7 +56,7 @@ class ClusterListView : Div() {
                         fontSize = 10.pt
 
                         headerCell("Id")
-                        sortHeaderCell("Name ", Model.clusterListModel.sortAscending)
+                        sortHeaderCell("Name ", this@ClusterListView.viewModel.sortAscending)
                         headerCell {
                             icon("far fa-square")
                         }

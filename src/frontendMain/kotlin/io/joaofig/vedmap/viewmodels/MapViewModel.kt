@@ -4,6 +4,7 @@ import io.joaofig.vedmap.AppScope
 import io.joaofig.vedmap.clients.ClusterClient
 import io.joaofig.vedmap.messages.ClusterAction
 import io.joaofig.vedmap.messages.ClusterMessage
+import io.joaofig.vedmap.models.Cluster
 import io.joaofig.vedmap.models.GeoMultiPolygon
 import io.kvision.state.ObservableListWrapper
 import kotlinx.coroutines.launch
@@ -20,12 +21,12 @@ class MapViewModel: ViewModel() {
             ClusterAction.SELECTED -> {
                 AppScope.launch {
                     val geoPolygon = ClusterClient.getClusterPolygon(msg.cluster.id)
-                    val mapCluster = MapCluster(msg.cluster.id, geoPolygon)
+                    val mapCluster = MapCluster(msg.cluster, geoPolygon)
                     clusters.add(mapCluster)
                 }
             }
             ClusterAction.DESELECTED -> {
-                val element = clusters.find { it.id == msg.cluster.id }
+                val element = clusters.find { it.cluster.id == msg.cluster.id }
                 if (element != null) {
                     clusters.remove(element)
                 }
@@ -35,6 +36,6 @@ class MapViewModel: ViewModel() {
 }
 
 data class MapCluster(
-    val id: Int,
+    val cluster: Cluster,
     val polygon: GeoMultiPolygon
 )

@@ -18,7 +18,6 @@ class DualCheckBox(val binder: ObservableValue<Boolean>) : Div() {
             } else {
                 "\uf0c8"
             }
-            console.log(iconName)
             span(iconName, className = "far") {
                 cursor = Cursor.POINTER
                 fontSize = 12.pt

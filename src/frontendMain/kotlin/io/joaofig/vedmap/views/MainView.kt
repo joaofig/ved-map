@@ -33,10 +33,10 @@ class MainView constructor() : Div() {
 
                 simpleSelectInput(
                     options = listOf(
+                        "clusters" to "Clusters",
                         "vehicles" to "Vehicles",
-                        "clusters" to "Clusters"
                     ),
-                    value = "vehicles"
+                    value = "clusters"
                 ) {  }.onEvent {
                     change = {
                         selectView(self.value)
@@ -44,7 +44,7 @@ class MainView constructor() : Div() {
                 }
 
                 add(contentDiv)
-                selectView("vehicles")
+                selectView("clusters")
             }
             add(MapView())
         }

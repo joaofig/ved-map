@@ -6,6 +6,7 @@ import io.kvision.maps.externals.geojson.MultiPolygon
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.geo.LatLngBounds
 import io.kvision.maps.externals.leaflet.layer.vector.Polygon
+import io.kvision.maps.externals.leaflet.layer.vector.Polyline
 
 fun GeoMultiPolygon.toArray(): Array<Array<Array<LatLng>>> {
     return this.polygons.map { p ->
@@ -19,6 +20,10 @@ fun GeoMultiPolygon.toArray(): Array<Array<Array<LatLng>>> {
 
 fun GeoMultiPolygon.toMultiPolygon(): Polygon<MultiPolygon> {
     return Polygon(this.toArray())
+}
+
+fun GeoMultiPolygon.toMultiPolygon(options: Polyline.PolylineOptions): Polygon<MultiPolygon> {
+    return Polygon(this.toArray(), options)
 }
 
 fun GeoBounds.toLatLngBounds(): LatLngBounds {
