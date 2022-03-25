@@ -10,4 +10,6 @@ interface IClusterService {
     suspend fun getClusterBounds(): GeoBounds
     suspend fun getClusters(): List<Cluster>
     suspend fun getClusterPolygon(clusterId: Int): GeoMultiPolygon
+    suspend fun getInboundClusters(clusterId: Int): List<Int>
+    suspend fun getOutboundClusters(clusterId: Int): List<Int>
 }

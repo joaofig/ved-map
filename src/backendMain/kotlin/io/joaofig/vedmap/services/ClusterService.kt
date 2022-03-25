@@ -26,4 +26,14 @@ actual class ClusterService : IClusterService {
     override suspend fun getClusterPolygon(clusterId: Int): GeoMultiPolygon {
         return repository.getClusterPolygon(clusterId)
     }
+
+    override suspend fun getInboundClusters(clusterId: Int): List<Int> {
+        val clusters = repository.getInboundClusters(clusterId)
+        println("#cluster: ${clusters.count()}")
+        return clusters
+    }
+
+    override suspend fun getOutboundClusters(clusterId: Int): List<Int> {
+        return repository.getOutboundClusters(clusterId)
+    }
 }

@@ -63,7 +63,7 @@ class MapView: Div() {
     private fun handleClusterContextMenu(
         event: LeafletMouseEvent,
         mapCluster: MapCluster
-    ): Unit {
+    ) {
         val menu = contextMenu {
             fontSize = 10.pt
             cursor = Cursor.POINTER
@@ -71,11 +71,14 @@ class MapView: Div() {
 
             cmLink("Hide").onClick {
                 ViewModelHub.selectCluster(mapCluster.cluster.id, false)
-//                MessageHub.clusterMessenger.send(ClusterMessage(context.first.cluster, ClusterAction.DESELECTED))
             }
             separator()
-            cmLink("Show inbound trips").onClick {  }
-            cmLink("Show outbound trips").onClick {  }
+            cmLink("Show inbound clusters").onClick {
+                ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
+            }
+            cmLink("Show outbound clusters").onClick {
+                ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
+            }
             separator()
             cmLink("Properties").onClick {  }
         }

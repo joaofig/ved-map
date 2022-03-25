@@ -11,4 +11,8 @@ object ClusterClient {
     suspend fun getClusters() = service.getClusters().map { ClusterListItem(it) }
 
     suspend fun getClusterPolygon(clusterId: Int) = service.getClusterPolygon(clusterId)
+
+    suspend fun getInboundClusters(clusterId: Int) = service.getInboundClusters(clusterId)
+
+    suspend fun getOutboundClusters(clusterId: Int) = service.getOutboundClusters(clusterId)
 }

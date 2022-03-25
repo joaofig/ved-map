@@ -7,6 +7,7 @@ import io.joaofig.vedmap.messages.ClusterMessage
 import io.joaofig.vedmap.models.Cluster
 import io.joaofig.vedmap.models.GeoMultiPolygon
 import io.kvision.state.ObservableListWrapper
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MapViewModel: ViewModel() {
@@ -16,15 +17,36 @@ class MapViewModel: ViewModel() {
         MessageHub.clusterMessenger.subscribe { handleClusterMessage(it) }
     }
 
+    fun showInboundClusters(clusterId: Int) {
+        AppScope.launch {
+            val clusters = ClusterClient.getInboundClusters(clusterId)
+            for (cluster in clusters) {
+                ViewModelHub.selectCluster(cluster, true)
+            }
+        }
+    }
+
+    fun showOutboundClusters(clusterId: Int) {
+        AppScope.launch {
+            val clusters = ClusterClient.getOutboundClusters(clusterId)
+            for (cluster in clusters) {
+                ViewModelHub.selectCluster(cluster, true)
+            }
+        }
+    }
+
     private fun handleClusterMessage(msg: ClusterMessage) {
         when (msg.action) {
             ClusterAction.SELECTED -> {
-                AppScope.launch {
+                val mapCluster = AppScope.async {
                     val geoPolygon = ClusterClient.getClusterPolygon(msg.cluster.id)
-                    val mapCluster = MapCluster(msg.cluster, geoPolygon)
-                    clusters.add(mapCluster)
+                    MapCluster(msg.cluster, geoPolygon)
                 }
-            }
+
+                AppScope.launch {
+                    clusters.add(mapCluster.await())
+                }
+           }
             ClusterAction.DESELECTED -> {
                 val element = clusters.find { it.cluster.id == msg.cluster.id }
                 if (element != null) {

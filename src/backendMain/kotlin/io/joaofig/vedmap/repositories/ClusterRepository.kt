@@ -1,10 +1,7 @@
 package io.joaofig.vedmap.repositories
 
 import com.uber.h3core.H3Core
-import io.joaofig.vedmap.databases.ClusterPointRow
-import io.joaofig.vedmap.databases.ClusterPointTable
-import io.joaofig.vedmap.databases.ClusterRow
-import io.joaofig.vedmap.databases.VehicleEnergyDatabase
+import io.joaofig.vedmap.databases.*
 import io.joaofig.vedmap.models.*
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.springframework.stereotype.Repository
@@ -57,5 +54,25 @@ class ClusterRepository {
             }
         )
         return geoMultiPolygon
+    }
+
+    fun getOutboundClusters(clusterId: Int): List<Int> {
+        return transaction(db = db) {
+            TripRow.find {
+                TripTable.clusterIni eq clusterId
+            }.map {
+                it.clusterEnd
+            }.distinct()
+        }
+    }
+
+    fun getInboundClusters(clusterId: Int): List<Int> {
+        return transaction(db = db) {
+            TripRow.find {
+                TripTable.clusterEnd eq clusterId
+            }.map {
+                it.clusterIni
+            }.distinct()
+        }
     }
 }

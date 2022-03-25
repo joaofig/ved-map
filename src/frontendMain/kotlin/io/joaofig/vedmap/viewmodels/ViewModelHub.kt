@@ -6,19 +6,20 @@ import kotlinx.coroutines.launch
 
 object ViewModelHub {
     val map by lazy { MapViewModel() }
-    val clusterList by lazy { loadClusters() }
+    val clusterList = ClusterListViewModel()
+
+    init {
+        loadClusters()
+    }
 
     fun selectCluster(clusterId: Int, select: Boolean) {
         val clusterListItem = clusterList.clusters.find { it.cluster.id == clusterId }
         clusterListItem?.isSelected?.value = select
     }
 
-    private fun loadClusters(): ClusterListViewModel {
-        val viewModel = ClusterListViewModel()
-
+    private fun loadClusters() {
         AppScope.launch {
-            viewModel.initialize(ClusterClient.getClusters())
+            clusterList.initialize(ClusterClient.getClusters())
         }
-        return viewModel
     }
 }
