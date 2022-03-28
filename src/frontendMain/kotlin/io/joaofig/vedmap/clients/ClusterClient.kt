@@ -15,4 +15,6 @@ object ClusterClient {
     suspend fun getInboundClusters(clusterId: Int) = service.getInboundClusters(clusterId)
 
     suspend fun getOutboundClusters(clusterId: Int) = service.getOutboundClusters(clusterId)
+
+    suspend fun getClusterPoints(clusterId: Int) = service.getClusterPoints(clusterId)
 }

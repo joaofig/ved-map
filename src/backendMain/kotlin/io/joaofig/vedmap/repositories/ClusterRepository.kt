@@ -75,4 +75,14 @@ class ClusterRepository {
             }.distinct()
         }
     }
+
+    fun getClusterPoints(clusterId: Int): List<GeoLocation> {
+        return transaction(db = db) {
+            ClusterPointRow.find {
+                ClusterPointTable.clusterId eq clusterId
+            }.map {
+                GeoLocation(it.latitude, it.longitude)
+            }
+        }
+    }
 }

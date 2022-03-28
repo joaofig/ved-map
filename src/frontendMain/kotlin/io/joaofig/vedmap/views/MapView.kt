@@ -6,10 +6,7 @@ import io.joaofig.vedmap.converters.toLatLngBounds
 import io.joaofig.vedmap.converters.toMultiPolygon
 import io.joaofig.vedmap.viewmodels.MapCluster
 import io.joaofig.vedmap.viewmodels.ViewModelHub
-import io.kvision.core.Cursor
-import io.kvision.dropdown.cmLink
-import io.kvision.dropdown.contextMenu
-import io.kvision.dropdown.separator
+import io.kvision.dropdown.*
 import io.kvision.html.Div
 import io.kvision.maps.DefaultTileLayers
 import io.kvision.maps.Maps
@@ -18,8 +15,6 @@ import io.kvision.maps.externals.leaflet.events.LeafletMouseEvent
 import io.kvision.maps.externals.leaflet.events.LeafletMouseEventHandlerFn
 import io.kvision.maps.externals.leaflet.layer.vector.Polygon
 import io.kvision.utils.perc
-import io.kvision.utils.pt
-import io.kvision.utils.px
 import kotlinx.coroutines.launch
 
 class MapView: Div() {
@@ -65,25 +60,34 @@ class MapView: Div() {
         mapCluster: MapCluster
     ) {
         val menu = contextMenu {
-            fontSize = 10.pt
-            cursor = Cursor.POINTER
-            padding = 2.px
+//            fontSize = 10.pt
+//            cursor = Cursor.POINTER
+//            padding = 2.px
 
             cmLink("Hide").onClick {
                 ViewModelHub.selectCluster(mapCluster.cluster.id, false)
             }
-            separator()
-            cmLink("Show inbound clusters").onClick {
-                ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
+            dropDown("Show", forDropDown = true) {
+//                fontSize = 10.pt
+//                cursor = Cursor.POINTER
+//                padding = 2.px
+//
+                ddLink("Cluster points").onClick {
+                    ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
+                }
+                ddLink("Inbound clusters").onClick {
+                    ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
+                }
+                ddLink("Outbound clusters").onClick {
+                    ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
+                }
+                separator()
+                ddLink("Cluster points").onClick {  }
             }
-            cmLink("Show outbound clusters").onClick {
-                ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
-            }
-            separator()
             cmLink("Properties").onClick {  }
         }
         menu.positionMenu(event.originalEvent)
-   }
+    }
 
     private fun createMap(): Maps {
         val map = Maps()

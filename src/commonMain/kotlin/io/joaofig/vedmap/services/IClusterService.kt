@@ -2,6 +2,7 @@ package io.joaofig.vedmap.services
 
 import io.joaofig.vedmap.models.Cluster
 import io.joaofig.vedmap.models.GeoBounds
+import io.joaofig.vedmap.models.GeoLocation
 import io.joaofig.vedmap.models.GeoMultiPolygon
 import io.kvision.annotations.KVService
 
@@ -12,4 +13,5 @@ interface IClusterService {
     suspend fun getClusterPolygon(clusterId: Int): GeoMultiPolygon
     suspend fun getInboundClusters(clusterId: Int): List<Int>
     suspend fun getOutboundClusters(clusterId: Int): List<Int>
+    suspend fun getClusterPoints(clusterId: Int): List<GeoLocation>
 }
