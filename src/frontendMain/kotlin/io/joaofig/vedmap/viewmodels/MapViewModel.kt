@@ -44,6 +44,10 @@ class MapViewModel: ViewModel() {
         }
     }
 
+    fun hideClusterPoints(clusterId: Int) {
+        clusterPoints.removeAll { it.clusterId == clusterId }
+    }
+
     private fun handleClusterMessage(msg: ClusterMessage) {
         when (msg.action) {
             ClusterAction.SELECTED -> {
@@ -60,6 +64,7 @@ class MapViewModel: ViewModel() {
                 val element = clusters.find { it.cluster.id == msg.cluster.id }
                 if (element != null) {
                     clusters.remove(element)
+                    clusterPoints.removeAll { it.clusterId == msg.cluster.id }
                 }
             }
         }
