@@ -2,6 +2,9 @@ package io.joaofig.vedmap.views
 
 import io.joaofig.vedmap.AppScope
 import io.joaofig.vedmap.clients.ClusterClient
+import io.joaofig.vedmap.controls.CtxMenuItem
+import io.joaofig.vedmap.controls.CtxPolylineOptions
+import io.joaofig.vedmap.controls.MapContextMenu
 import io.joaofig.vedmap.converters.toLatLngBounds
 import io.joaofig.vedmap.converters.toMultiPolygon
 import io.joaofig.vedmap.viewmodels.ClusterPoint
@@ -13,7 +16,6 @@ import io.kvision.maps.DefaultTileLayers
 import io.kvision.maps.Maps
 import io.kvision.maps.externals.geojson.MultiPolygon
 import io.kvision.maps.externals.leaflet.events.LeafletMouseEvent
-import io.kvision.maps.externals.leaflet.events.LeafletMouseEventHandlerFn
 import io.kvision.maps.externals.leaflet.layer.vector.Circle
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.maps.externals.leaflet.layer.vector.Polygon
@@ -22,6 +24,7 @@ import kotlinx.coroutines.launch
 
 class MapView: Div() {
     private val map = createMap()
+    private val contextMenu = MapContextMenu()
     private val viewModel = ViewModelHub.map
     private val clusters: MutableMap<Int, Polygon<MultiPolygon>> = mutableMapOf()
     private val clusterPoints: MutableMap<Int, List<CircleMarker>> = mutableMapOf()
@@ -40,6 +43,7 @@ class MapView: Div() {
 
         // Remove clusters from map
         for (id in toRemove) {
+            clusters[id]?.removeEventListener("contextmenu")
             clusters[id]?.remove()
             clusters.remove(id)
         }
@@ -48,12 +52,29 @@ class MapView: Div() {
         for (id in toInsert) {
             val mapCluster = mapClusters.find { it.cluster.id == id }
             if (mapCluster != null) {
-                val cluster = mapCluster.polygon.toMultiPolygon()
+                val options = CtxPolylineOptions().apply {
+                    contextmenu = true
+                    contextmenuWidth = 140
+                    contextmenuItems = arrayOf(
+                        CtxMenuItem("Show Points") {
+                            ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
+                        },
+                        CtxMenuItem("Hide Points") {
+                            ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
+                        },
+                        CtxMenuItem(separator = true),
+                        CtxMenuItem("Hide Cluster") {
+                            ViewModelHub.selectCluster(mapCluster.cluster.id, false)
+                        }
+                    )
+                }
+                val cluster = mapCluster.polygon.toMultiPolygon(options)
                 cluster.bindPopup(mapCluster.cluster.name)
 
-                val fn: LeafletMouseEventHandlerFn = { e -> handleClusterContextMenu(e, mapCluster) }
-                cluster.on("contextmenu", fn, cluster)
-
+//                val fn: LeafletMouseEventHandlerFn = { event: LeafletMouseEvent ->
+//                    handleClusterContextMenu(event, mapCluster) }
+//                cluster.addEventListener("contextmenu", fn)
+//
                 clusters[id] = cluster
                 map.leafletMap { cluster.addTo(this) }
             }

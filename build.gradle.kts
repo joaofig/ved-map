@@ -142,6 +142,7 @@ kotlin {
                 implementation("io.kvision:kvision-toast:$kvisionVersion")
                 implementation("io.kvision:kvision-print:$kvisionVersion")
                 implementation("com.uber:h3:$uberH3Version")
+                implementation(npm("leaflet-contextmenu", "^1.4.0"))
             }
             kotlin.srcDir("build/generated-src/frontend")
         }
