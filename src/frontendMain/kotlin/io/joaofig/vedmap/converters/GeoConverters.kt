@@ -2,6 +2,8 @@ package io.joaofig.vedmap.converters
 
 import io.joaofig.vedmap.models.GeoBounds
 import io.joaofig.vedmap.models.GeoMultiPolygon
+import io.joaofig.vedmap.models.Trajectory
+import io.kvision.maps.externals.geojson.LineString
 import io.kvision.maps.externals.geojson.MultiPolygon
 import io.kvision.maps.externals.leaflet.geo.LatLng
 import io.kvision.maps.externals.leaflet.geo.LatLngBounds
@@ -30,5 +32,13 @@ fun GeoBounds.toLatLngBounds(): LatLngBounds {
     return LatLngBounds(
         LatLng(minLat, minLon),
         LatLng(maxLat, maxLon)
+    )
+}
+
+fun Trajectory.toPolyline(): Polyline<LineString> {
+    return Polyline(
+        points
+            .map { LatLng(it.latitude, it.longitude) }
+            .toTypedArray()
     )
 }

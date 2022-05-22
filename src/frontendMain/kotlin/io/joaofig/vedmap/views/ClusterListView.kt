@@ -1,7 +1,8 @@
 package io.joaofig.vedmap.views
 
-import io.joaofig.vedmap.controls.dualCheckBox
+import io.joaofig.vedmap.controls.duoCheckBox
 import io.joaofig.vedmap.controls.sortHeaderCell
+import io.joaofig.vedmap.controls.triCheckBox
 import io.joaofig.vedmap.viewmodels.ViewModelHub
 import io.kvision.core.Overflow
 import io.kvision.core.Position
@@ -11,7 +12,6 @@ import io.kvision.form.text.TextInputType
 import io.kvision.form.text.text
 import io.kvision.html.Div
 import io.kvision.html.div
-import io.kvision.html.icon
 import io.kvision.i18n.I18n
 import io.kvision.panel.vPanel
 import io.kvision.state.bind
@@ -58,7 +58,7 @@ class ClusterListView : Div() {
                         headerCell("Id")
                         sortHeaderCell("Name ", this@ClusterListView.viewModel.sortAscending)
                         headerCell {
-                            icon("far fa-square")
+                            triCheckBox(this@ClusterListView.viewModel.allSelected)
                         }
 
                         state.mapIndexed { index, cluster ->
@@ -68,7 +68,7 @@ class ClusterListView : Div() {
                                 cell(state.cluster.id.toString())
                                 cell(state.cluster.name)
                                 cell {
-                                   dualCheckBox(state.isSelected)
+                                   duoCheckBox(state.isSelected)
                                 }
                             }
                         }

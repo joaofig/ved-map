@@ -1,15 +1,15 @@
 package io.joaofig.vedmap.viewmodels
 
 import io.joaofig.vedmap.AppScope
-import io.joaofig.vedmap.clients.ClusterClient
+import io.joaofig.vedmap.repositories.ClusterRepository
 import kotlinx.coroutines.launch
 
 object ViewModelHub {
     val map by lazy { MapViewModel() }
-    val clusterList = ClusterListViewModel()
+    val clusterList by lazy { createClusterListViewModel() }
+    val trip by lazy { createTripViewModel() }
 
     init {
-        loadClusters()
     }
 
     fun selectCluster(clusterId: Int, select: Boolean) {
@@ -17,9 +17,21 @@ object ViewModelHub {
         clusterListItem?.isSelected?.value = select
     }
 
-    private fun loadClusters() {
+    private fun createClusterListViewModel(): ClusterListViewModel {
+        val viewModel = ClusterListViewModel()
+
         AppScope.launch {
-            clusterList.initialize(ClusterClient.getClusters())
+            viewModel.initialize(ClusterRepository.getClusters())
         }
+        return viewModel
+    }
+
+    private fun createTripViewModel(): TripViewModel {
+        val viewModel = TripViewModel()
+
+        AppScope.launch {
+            viewModel.initialize(ClusterRepository.getClusters())
+        }
+        return viewModel
     }
 }

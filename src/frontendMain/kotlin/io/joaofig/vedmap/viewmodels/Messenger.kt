@@ -1,7 +1,7 @@
 package io.joaofig.vedmap.viewmodels
 
 open class Messenger<T> {
-    protected val observers = mutableListOf<(T) -> Unit>()
+    private val observers = mutableListOf<(T) -> Unit>()
 
     fun send(msg: T) {
         observers.forEach { it(msg) }

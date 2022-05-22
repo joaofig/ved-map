@@ -18,6 +18,7 @@ class MainView constructor() : Div() {
 
     private var vehicleView: VehicleView? = null
     private var clusterListView: ClusterListView? = null
+    private var tripView: TripView? = null
 
     init {
         height = 100.vh
@@ -34,7 +35,7 @@ class MainView constructor() : Div() {
                 simpleSelectInput(
                     options = listOf(
                         "clusters" to "Clusters",
-                        "vehicles" to "Vehicles",
+                        "trips" to "Trips",
                     ),
                     value = "clusters"
                 ) {  }.onEvent {
@@ -67,10 +68,16 @@ class MainView constructor() : Div() {
         return view
     }
 
+    private fun getTripView(): TripView {
+        val view: TripView = tripView ?: TripView()
+        tripView = view
+        return view
+    }
+
     private fun selectView(viewName: String?) {
         if (viewName != null) {
             when (viewName) {
-                "vehicles" -> setView(getVehicleView())
+                "trips" -> setView(getTripView())
                 "clusters" -> setView(getClusterListView())
             }
         }

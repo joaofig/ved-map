@@ -9,14 +9,13 @@ import io.kvision.state.ObservableValue
 import io.kvision.state.bind
 import io.kvision.utils.pt
 
-class DualCheckBox(val binder: ObservableValue<Boolean>) : Div() {
-
+class RadioButton(private val binder: ObservableValue<Boolean>) : Div() {
     init {
         bind(binder) { state ->
             val iconName = if (state) {
-                "\uf14a"
+                "\uf192" //"\uf058"
             } else {
-                "\uf0c8"
+                "\uf111"
             }
             span(iconName, className = "far") {
                 cursor = Cursor.POINTER
@@ -30,8 +29,8 @@ class DualCheckBox(val binder: ObservableValue<Boolean>) : Div() {
     }
 }
 
-fun Container.dualCheckBox(binder: ObservableValue<Boolean>): DualCheckBox {
-    val dualCheckBox = DualCheckBox(binder)
-    this.add(dualCheckBox)
-    return dualCheckBox
+fun Container.radioButton(binder: ObservableValue<Boolean>): RadioButton {
+    val radioButton = RadioButton(binder)
+    this.add(radioButton)
+    return radioButton
 }

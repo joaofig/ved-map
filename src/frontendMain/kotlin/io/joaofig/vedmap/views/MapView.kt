@@ -7,18 +7,20 @@ import io.joaofig.vedmap.controls.CtxPolylineOptions
 import io.joaofig.vedmap.controls.MapContextMenu
 import io.joaofig.vedmap.converters.toLatLngBounds
 import io.joaofig.vedmap.converters.toMultiPolygon
+import io.joaofig.vedmap.converters.toPolyline
+import io.joaofig.vedmap.models.Trajectory
 import io.joaofig.vedmap.viewmodels.ClusterPoint
 import io.joaofig.vedmap.viewmodels.MapCluster
 import io.joaofig.vedmap.viewmodels.ViewModelHub
-import io.kvision.dropdown.*
 import io.kvision.html.Div
 import io.kvision.maps.DefaultTileLayers
 import io.kvision.maps.Maps
+import io.kvision.maps.externals.geojson.LineString
 import io.kvision.maps.externals.geojson.MultiPolygon
-import io.kvision.maps.externals.leaflet.events.LeafletMouseEvent
 import io.kvision.maps.externals.leaflet.layer.vector.Circle
 import io.kvision.maps.externals.leaflet.layer.vector.CircleMarker
 import io.kvision.maps.externals.leaflet.layer.vector.Polygon
+import io.kvision.maps.externals.leaflet.layer.vector.Polyline
 import io.kvision.utils.perc
 import kotlinx.coroutines.launch
 
@@ -28,11 +30,59 @@ class MapView: Div() {
     private val viewModel = ViewModelHub.map
     private val clusters: MutableMap<Int, Polygon<MultiPolygon>> = mutableMapOf()
     private val clusterPoints: MutableMap<Int, List<CircleMarker>> = mutableMapOf()
+    private var tripClusterIni: Polygon<MultiPolygon>? = null
+    private var tripClusterEnd: Polygon<MultiPolygon>? = null
+    private val trajectories: MutableMap<Int, Polyline<LineString>> = mutableMapOf()
 
     init {
         add(map)
         viewModel.clusters.subscribe { updateClusters(it) }
         viewModel.clusterPoints.subscribe { updateClusterPoints(it) }
+        viewModel.tripClusterIni.subscribe { updateTripClusterIni(it) }
+        viewModel.tripClusterEnd.subscribe { updateTripClusterEnd(it) }
+        viewModel.trajectories.subscribe { updateTrajectories(it) }
+    }
+
+    private fun createTripCluster(mapCluster: MapCluster): Polygon<MultiPolygon> {
+        val options = CtxPolylineOptions().apply {
+            contextmenu = true
+            contextmenuWidth = 140
+            contextmenuItems = arrayOf(
+                CtxMenuItem("Show Points") {
+                    ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
+                },
+                CtxMenuItem("Hide Points") {
+                    ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
+                }
+            )
+        }
+        val cluster = mapCluster.polygon.toMultiPolygon(options)
+        cluster.bindPopup(mapCluster.cluster.name)
+        return cluster
+    }
+
+    private fun updateTripClusterIni(cluster: MapCluster?) {
+        tripClusterIni?.remove()
+        tripClusterIni = null
+        if (cluster != null) {
+            val polygon = createTripCluster(cluster)
+            map.leafletMap {
+                polygon.addTo(this)
+                tripClusterIni = polygon
+            }
+        }
+    }
+
+    private fun updateTripClusterEnd(cluster: MapCluster?) {
+        tripClusterEnd?.remove()
+        tripClusterEnd = null
+        if (cluster != null) {
+            val polygon = createTripCluster(cluster)
+            map.leafletMap {
+                polygon.addTo(this)
+                tripClusterEnd = polygon
+            }
+        }
     }
 
     private fun updateClusters(mapClusters: List<MapCluster>) {
@@ -63,6 +113,13 @@ class MapView: Div() {
                             ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
                         },
                         CtxMenuItem(separator = true),
+                        CtxMenuItem("Inbound Clusters") {
+                            ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
+                        },
+                        CtxMenuItem("Outbound Clusters") {
+                            ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
+                        },
+                        CtxMenuItem(separator = true),
                         CtxMenuItem("Hide Cluster") {
                             ViewModelHub.selectCluster(mapCluster.cluster.id, false)
                         }
@@ -71,12 +128,30 @@ class MapView: Div() {
                 val cluster = mapCluster.polygon.toMultiPolygon(options)
                 cluster.bindPopup(mapCluster.cluster.name)
 
-//                val fn: LeafletMouseEventHandlerFn = { event: LeafletMouseEvent ->
-//                    handleClusterContextMenu(event, mapCluster) }
-//                cluster.addEventListener("contextmenu", fn)
-//
                 clusters[id] = cluster
                 map.leafletMap { cluster.addTo(this) }
+            }
+        }
+    }
+
+    private fun updateTrajectories(updated: List<Trajectory>) {
+        val newIdSet = updated.map { it.tripId }.toSet()
+        val oldIdSet = clusters.keys
+        val toInsert = newIdSet.minus(oldIdSet)
+        val toRemove = oldIdSet.minus(newIdSet)
+
+        for (id in toRemove) {
+            trajectories[id]?.remove()
+            trajectories.remove(id)
+        }
+
+        for (id in toInsert) {
+            val trajectory = updated.find { id == it.tripId }
+            if (trajectory != null) {
+                val polyline = trajectory.toPolyline()
+
+                trajectories[id] = polyline
+                map.leafletMap { polyline.addTo(this) }
             }
         }
     }
@@ -109,44 +184,6 @@ class MapView: Div() {
             }
             clusterPoints[id] = circles
         }
-    }
-
-    private fun handleClusterContextMenu(
-        event: LeafletMouseEvent,
-        mapCluster: MapCluster
-    ) {
-        val menu = contextMenu {
-//            fontSize = 10.pt
-//            cursor = Cursor.POINTER
-//            padding = 2.px
-
-            dropDown("Show", forDropDown = true) {
-//                fontSize = 10.pt
-//                cursor = Cursor.POINTER
-//                padding = 2.px
-//
-                ddLink("Inbound clusters").onClick {
-                    ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
-                }
-                ddLink("Outbound clusters").onClick {
-                    ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
-                }
-                separator()
-                ddLink("Cluster points").onClick {
-                    ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
-                }
-            }
-            dropDown("Hide", forDropDown = true) {
-                ddLink("Cluster").onClick {
-                    ViewModelHub.selectCluster(mapCluster.cluster.id, false)
-                }
-                ddLink("Cluster points").onClick {
-                    ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
-                }
-            }
-            cmLink("Properties").onClick {  }
-        }
-        menu.positionMenu(event.originalEvent)
     }
 
     private fun createMap(): Maps {

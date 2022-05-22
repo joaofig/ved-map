@@ -2,6 +2,7 @@ package io.joaofig.vedmap.databases
 
 import io.joaofig.vedmap.models.MapPoint
 import org.jetbrains.exposed.dao.IntEntity
+import org.jetbrains.exposed.dao.IntEntityClass
 import org.jetbrains.exposed.dao.id.EntityID
 import org.jetbrains.exposed.dao.id.IntIdTable
 import org.jetbrains.exposed.sql.Column
@@ -10,7 +11,7 @@ object MapPointTable: IntIdTable(name = "signal", columnName = "signal_id") {
     val dayNumber:      Column<Double> = double("day_num")
     val vehicleId:      Column<Int> = integer("vehicle_id")
     val tripId:         Column<Int> = integer("trip_id")
-    val timestamp:      Column<Int> = integer("timestamp")
+    val timestamp:      Column<Int> = integer("time_stamp")
     val latitude:       Column<Double> = double("latitude")
     val longitude:      Column<Double> = double("longitude")
     val speed:          Column<Double?> = double("speed").nullable()
@@ -20,6 +21,8 @@ object MapPointTable: IntIdTable(name = "signal", columnName = "signal_id") {
 }
 
 class MapPointRow(id: EntityID<Int>): IntEntity(id) {
+    companion object : IntEntityClass<MapPointRow>(MapPointTable)
+
     var dayNumber by MapPointTable.dayNumber
     var vehicleId by MapPointTable.vehicleId
     var tripId by MapPointTable.tripId

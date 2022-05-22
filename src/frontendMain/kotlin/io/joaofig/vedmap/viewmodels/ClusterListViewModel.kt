@@ -1,7 +1,7 @@
 package io.joaofig.vedmap.viewmodels
 
 import io.joaofig.vedmap.messages.ClusterAction
-import io.joaofig.vedmap.messages.ClusterMessage
+import io.joaofig.vedmap.models.Cluster
 import io.kvision.state.ObservableListWrapper
 import io.kvision.state.ObservableValue
 
@@ -9,6 +9,7 @@ class ClusterListViewModel : ViewModel() {
     private val clusterList: MutableList<ClusterListItem> = mutableListOf()
     val clusters: ObservableListWrapper<ClusterListItem> = ObservableListWrapper(mutableListOf())
     val sortAscending = ObservableValue<Boolean?>(null)
+    val allSelected = ObservableValue<Boolean?>(null)
 
     init {
         sortAscending.subscribe { sortAndFilter() }
@@ -20,15 +21,15 @@ class ClusterListViewModel : ViewModel() {
             sortAndFilter()
         }
 
-    fun initialize(list: List<ClusterListItem>) {
-        clusterList.addAll(list)
+    fun initialize(list: List<Cluster>) {
+        clusterList.addAll(list.map { ClusterListItem(it) })
         clusters.addAll(clusterList)
         clusterList.forEach {
             it.isSelected.subscribe { state ->
                 if (state) {
-                    MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.SELECTED))
+                    MessageHub.send(it.cluster, ClusterAction.SELECTED, this)
                 } else {
-                    MessageHub.clusterMessenger.send(ClusterMessage(it.cluster, ClusterAction.DESELECTED))
+                    MessageHub.send(it.cluster, ClusterAction.DESELECTED, this)
                 }
             }
         }
@@ -41,7 +42,7 @@ class ClusterListViewModel : ViewModel() {
 
     private fun sortClustersByName(
         sort: Boolean?,
-        list:MutableList<ClusterListItem>
+        list: MutableList<ClusterListItem>
     ): MutableList<ClusterListItem> {
         return when (sort) {
             null -> list
