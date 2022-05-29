@@ -89,6 +89,8 @@ class MapViewModel: ViewModel() {
             }
 
             ClusterAction.SHOW_END -> {
+                trajectories.clear()
+
                 AppScope.launch {
                     val polygon = ClusterRepository.getClusterPolygon(msg.cluster.id)
                     if (polygon != null) {

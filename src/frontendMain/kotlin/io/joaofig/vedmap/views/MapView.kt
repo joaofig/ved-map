@@ -2,9 +2,9 @@ package io.joaofig.vedmap.views
 
 import io.joaofig.vedmap.AppScope
 import io.joaofig.vedmap.clients.ClusterClient
+import io.joaofig.vedmap.controls.ContextMenuMap
+import io.joaofig.vedmap.controls.ContextMenuPolylineOptions
 import io.joaofig.vedmap.controls.CtxMenuItem
-import io.joaofig.vedmap.controls.CtxPolylineOptions
-import io.joaofig.vedmap.controls.MapContextMenu
 import io.joaofig.vedmap.converters.toLatLngBounds
 import io.joaofig.vedmap.converters.toMultiPolygon
 import io.joaofig.vedmap.converters.toPolyline
@@ -14,7 +14,6 @@ import io.joaofig.vedmap.viewmodels.MapCluster
 import io.joaofig.vedmap.viewmodels.ViewModelHub
 import io.kvision.html.Div
 import io.kvision.maps.DefaultTileLayers
-import io.kvision.maps.Maps
 import io.kvision.maps.externals.geojson.LineString
 import io.kvision.maps.externals.geojson.MultiPolygon
 import io.kvision.maps.externals.leaflet.layer.vector.Circle
@@ -26,7 +25,6 @@ import kotlinx.coroutines.launch
 
 class MapView: Div() {
     private val map = createMap()
-    private val contextMenu = MapContextMenu()
     private val viewModel = ViewModelHub.map
     private val clusters: MutableMap<Int, Polygon<MultiPolygon>> = mutableMapOf()
     private val clusterPoints: MutableMap<Int, List<CircleMarker>> = mutableMapOf()
@@ -44,19 +42,18 @@ class MapView: Div() {
     }
 
     private fun createTripCluster(mapCluster: MapCluster): Polygon<MultiPolygon> {
-        val options = CtxPolylineOptions().apply {
-            contextmenu = true
-            contextmenuWidth = 140
-            contextmenuItems = arrayOf(
-                CtxMenuItem("Show Points") {
-                    ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
-                },
-                CtxMenuItem("Hide Points") {
-                    ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
-                }
-            )
-        }
-        val cluster = mapCluster.polygon.toMultiPolygon(options)
+//        val options = PolylineOptions().apply {
+//            contextmenu = true
+//            contextmenuItems = arrayOf(
+//                CtxMenuItem("Show Points") {
+//                    ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
+//                },
+//                CtxMenuItem("Hide Points") {
+//                    ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
+//                }
+//            )
+//        }
+        val cluster = mapCluster.polygon.toMultiPolygon()
         cluster.bindPopup(mapCluster.cluster.name)
         return cluster
     }
@@ -93,7 +90,6 @@ class MapView: Div() {
 
         // Remove clusters from map
         for (id in toRemove) {
-            clusters[id]?.removeEventListener("contextmenu")
             clusters[id]?.remove()
             clusters.remove(id)
         }
@@ -102,10 +98,32 @@ class MapView: Div() {
         for (id in toInsert) {
             val mapCluster = mapClusters.find { it.cluster.id == id }
             if (mapCluster != null) {
-                val options = CtxPolylineOptions().apply {
+//                val options = obj<ContextMenuPolylineOptions>() {
+//                    contextmenu = true
+//                    contextmenuItems = arrayOf(
+//                        CtxMenuItem("Show Points") {
+//                            ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
+//                        },
+//                        CtxMenuItem("Hide Points") {
+//                            ViewModelHub.map.hideClusterPoints(mapCluster.cluster.id)
+//                        },
+//                        CtxMenuItem(separator = true),
+//                        CtxMenuItem("Inbound Clusters") {
+//                            ViewModelHub.map.showInboundClusters(mapCluster.cluster.id)
+//                        },
+//                        CtxMenuItem("Outbound Clusters") {
+//                            ViewModelHub.map.showOutboundClusters(mapCluster.cluster.id)
+//                        },
+//                        CtxMenuItem(separator = true),
+//                        CtxMenuItem("Hide Cluster") {
+//                            ViewModelHub.selectCluster(mapCluster.cluster.id, false)
+//                        }
+//                    )
+//                }
+                val cluster = mapCluster.polygon.toMultiPolygon<ContextMenuPolylineOptions> {
                     contextmenu = true
-                    contextmenuWidth = 140
                     contextmenuItems = arrayOf(
+                        CtxMenuItem(separator = true),
                         CtxMenuItem("Show Points") {
                             ViewModelHub.map.showClusterPoints(mapCluster.cluster.id)
                         },
@@ -125,8 +143,7 @@ class MapView: Div() {
                         }
                     )
                 }
-                val cluster = mapCluster.polygon.toMultiPolygon(options)
-                cluster.bindPopup(mapCluster.cluster.name)
+//                cluster.bindPopup(mapCluster.cluster.name)
 
                 clusters[id] = cluster
                 map.leafletMap { cluster.addTo(this) }
@@ -136,7 +153,7 @@ class MapView: Div() {
 
     private fun updateTrajectories(updated: List<Trajectory>) {
         val newIdSet = updated.map { it.tripId }.toSet()
-        val oldIdSet = clusters.keys
+        val oldIdSet = trajectories.keys
         val toInsert = newIdSet.minus(oldIdSet)
         val toRemove = oldIdSet.minus(newIdSet)
 
@@ -148,8 +165,11 @@ class MapView: Div() {
         for (id in toInsert) {
             val trajectory = updated.find { id == it.tripId }
             if (trajectory != null) {
-                val polyline = trajectory.toPolyline()
-
+                val polyline = trajectory.toPolyline().apply {
+                    with(options) {
+                        color = "#800000"
+                    }
+                }
                 trajectories[id] = polyline
                 map.leafletMap { polyline.addTo(this) }
             }
@@ -186,11 +206,22 @@ class MapView: Div() {
         }
     }
 
-    private fun createMap(): Maps {
-        val map = Maps()
+    private fun createMap(): ContextMenuMap {
+        val map = ContextMenuMap()
 
         map.height = 100.perc
         map.width = 100.perc
+        with(map.options) {
+            contextmenu = true
+            contextmenuItems = arrayOf(
+                CtxMenuItem("Zoom In") {
+                    zoomIn()
+                },
+                CtxMenuItem("Zoom Out") {
+                    zoomOut()
+                }
+            )
+        }
 
         AppScope.launch {
             val geoBounds = ClusterClient.getClusterBounds()
@@ -202,5 +233,17 @@ class MapView: Div() {
             }
         }
         return map
+    }
+
+    private fun zoomIn() {
+        map.leafletMap {
+            zoomIn()
+        }
+    }
+
+    private fun zoomOut() {
+        map.leafletMap {
+            zoomOut()
+        }
     }
 }

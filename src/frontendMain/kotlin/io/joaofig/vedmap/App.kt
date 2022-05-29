@@ -1,5 +1,6 @@
 package io.joaofig.vedmap
 
+import io.joaofig.vedmap.controls.MapContextMenuModule
 import io.joaofig.vedmap.views.MainView
 import io.kvision.*
 import io.kvision.i18n.DefaultI18nManager
@@ -29,23 +30,6 @@ class App : Application() {
         root("kvapp") {
             add(MainView())
         }
-//
-//        AppScope.launch {
-//            val trips = TripClient.getVehicleTrips(2)
-//            for (trip in trips) {
-//                root.add(Span(trip.toString()))
-//                root.add(Br())
-//            }
-//        }
-//
-//        AppScope.launch {
-//            val vehicles = VehicleClient.getVehicles()
-//            for (vehicle in vehicles) {
-//                root.add(Span(vehicle.toString()))
-//                root.add(Br())
-//            }
-//        }
-
     }
 }
 
@@ -66,6 +50,7 @@ fun main() {
         ChartModule,
         TabulatorModule,
         MapsModule,
+        MapContextMenuModule,
         ToastModule,
         PrintModule,
         CoreModule
