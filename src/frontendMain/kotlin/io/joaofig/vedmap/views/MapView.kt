@@ -209,15 +209,17 @@ class MapView: Div() {
     private fun createMap(): ContextMenuMap {
         val map = ContextMenuMap()
 
+//        val x = io.kvision.require("")
+
         map.height = 100.perc
         map.width = 100.perc
         with(map.options) {
             contextmenu = true
             contextmenuItems = arrayOf(
-                CtxMenuItem("Zoom In") {
+                CtxMenuItem("Zoom In", icon = io.kvision.require("images/png/zoom_in.png").toString()) {
                     zoomIn()
                 },
-                CtxMenuItem("Zoom Out") {
+                CtxMenuItem("Zoom Out", icon = io.kvision.require("images/png/zoom_out.png").toString()) {
                     zoomOut()
                 }
             )
