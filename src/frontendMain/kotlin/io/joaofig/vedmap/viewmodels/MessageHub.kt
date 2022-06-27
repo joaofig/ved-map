@@ -5,8 +5,8 @@ import io.joaofig.vedmap.messages.ClusterMessage
 import io.joaofig.vedmap.models.Cluster
 
 object MessageHub {
-    val clusterMessenger = Messenger<ClusterMessage>()
+    val cluster = Messenger<ClusterMessage>()
 
     fun send(cluster: Cluster, action: ClusterAction, sender: ViewModel) =
-        clusterMessenger.send(ClusterMessage(cluster, action, sender))
+        this.cluster.send(ClusterMessage(cluster, action, sender))
 }

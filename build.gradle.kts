@@ -35,8 +35,6 @@ val uberH3Version: String by project
 val webDir = file("src/frontendMain/web")
 val mainClassName = "io.joaofig.vedmap.MainKt"
 
-val localhost = "127.0.0.1"
-
 kotlin {
     jvm("backend") {
         withJava()
@@ -56,8 +54,8 @@ kotlin {
                     open = false,
                     port = 3000,
                     proxy = mutableMapOf(
-                        "/kv/*" to "http://$localhost:8080",
-                        "/kvws/*" to mapOf("target" to "ws://$localhost:8080", "ws" to true)
+                        "/kv/*" to "http://localhost:8080",
+                        "/kvws/*" to mapOf("target" to "ws://localhost:8080", "ws" to true)
                     ),
                     static = mutableListOf("$buildDir/processedResources/frontend/main")
                 )
@@ -141,7 +139,6 @@ kotlin {
                 implementation("io.kvision:kvision-maps:$kvisionVersion")
                 implementation("io.kvision:kvision-toast:$kvisionVersion")
                 implementation("io.kvision:kvision-print:$kvisionVersion")
-                implementation("com.uber:h3:$uberH3Version")
                 implementation(npm("leaflet-contextmenu", "^1.4.0"))
             }
             kotlin.srcDir("build/generated-src/frontend")
@@ -156,6 +153,9 @@ kotlin {
 }
 
 afterEvaluate {
+    rootProject.extensions.configure<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootExtension> {
+        versions.webpackCli.version="4.10.0"
+    }
     tasks {
         create("frontendArchive", Jar::class).apply {
             dependsOn("frontendBrowserProductionWebpack")

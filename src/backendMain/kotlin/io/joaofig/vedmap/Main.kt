@@ -19,7 +19,6 @@ import org.springframework.context.annotation.Bean
 class KVApplication {
     @Bean
     fun getManagers() = listOf(
-        PingServiceManager,
         TripServiceManager,
         VehicleServiceManager,
         MapPointServiceManager,

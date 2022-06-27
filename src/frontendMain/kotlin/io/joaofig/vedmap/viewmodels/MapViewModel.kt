@@ -22,7 +22,7 @@ class MapViewModel: ViewModel() {
     val trajectories = ObservableListWrapper<Trajectory>(mutableListOf())
 
     init {
-        MessageHub.clusterMessenger.subscribe { handleClusterMessage(it) }
+        MessageHub.cluster.subscribe { handleClusterMessage(it) }
     }
 
     fun showInboundClusters(clusterId: Int) {

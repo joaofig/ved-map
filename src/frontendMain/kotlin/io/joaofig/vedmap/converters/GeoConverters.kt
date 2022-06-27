@@ -29,7 +29,7 @@ fun GeoMultiPolygon.toMultiPolygon(options: Polyline.PolylineOptions): Polygon<M
     return Polygon(this.toArray(), options)
 }
 
-fun <T: Polyline.PolylineOptions> GeoMultiPolygon.toMultiPolygon(configure: T.() -> Unit = {}): Polygon<MultiPolygon>{
+fun <T: Polyline.PolylineOptions> GeoMultiPolygon.toMultiPolygon(configure: dynamic.() -> Unit = {}): Polygon<MultiPolygon>{
     return Polygon(
         latlngs = this.toArray(),
         options = obj<T>(configure)
